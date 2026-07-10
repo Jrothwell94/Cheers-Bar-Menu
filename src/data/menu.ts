@@ -5,6 +5,7 @@ export type MenuItem = {
   slug: string;
   name: string;
   category: string;
+  subcategory?: string;
   price: string;
   tagline: string;
   ingredients: string[];
@@ -13,14 +14,30 @@ export type MenuItem = {
   tags?: TagId[];
 };
 
+export type MenuSubcategory = {
+  id: string;
+  name: string;
+};
+
 export type MenuCategory = {
   id: string;
   name: string;
+  subcategories?: MenuSubcategory[];
 };
 
 export const categories: MenuCategory[] = [
   { id: "cocktails", name: "Cocktails" },
   { id: "greek-favourites", name: "Greek Favourites" },
+  {
+    id: "spirits",
+    name: "Spirits",
+    subcategories: [
+      { id: "whiskeys", name: "Whiskeys" },
+      { id: "rums", name: "Rums" },
+      { id: "gins", name: "Gins" },
+      { id: "vodkas", name: "Vodkas" },
+    ],
+  },
   { id: "beers", name: "Beers" },
   { id: "wine", name: "Wine" },
   { id: "soft-drinks", name: "Soft Drinks" },
@@ -157,6 +174,105 @@ export const menuItems: MenuItem[] = [
       "Verdea is a traditional wine made almost exclusively on Zakynthos, aged for years in old wooden barrels to develop its distinctive, slightly oxidative character. It's one of the island's proudest and best-kept secrets.",
   },
   {
+    slug: "captain-morgan-spiced",
+    name: "Captain Morgan Spiced",
+    category: "spirits",
+    subcategory: "rums",
+    price: "€6.50",
+    tagline: "Golden rum with vanilla & spice",
+    ingredients: [],
+    history:
+      "Named after the 17th-century privateer Sir Henry Morgan, this spiced rum blend has become one of the world's best-selling rum brands since its launch in Jamaica in the 1940s.",
+  },
+  {
+    slug: "captain-morgan-dark",
+    name: "Captain Morgan Dark",
+    category: "spirits",
+    subcategory: "rums",
+    price: "€6.50",
+    tagline: "Rich, full-bodied dark rum",
+    ingredients: [],
+    history:
+      "A deeper, more molasses-forward expression than its spiced sibling, favoured by those who like a bolder rum on the rocks or in a classic rum and cola.",
+  },
+  {
+    slug: "bacardi-white",
+    name: "Bacardi White",
+    category: "spirits",
+    subcategory: "rums",
+    price: "€6.00",
+    tagline: "Light, smooth Cuban-style rum",
+    ingredients: [],
+    history:
+      "Founded in Santiago de Cuba in 1862, Bacardi pioneered the light, filtered rum style that's now the backbone of countless classic cocktails, from the Daiquiri to the Mojito.",
+  },
+  {
+    slug: "bacardi-black",
+    name: "Bacardi Black",
+    category: "spirits",
+    subcategory: "rums",
+    price: "€6.50",
+    tagline: "Full-bodied aged dark rum",
+    ingredients: [],
+    history:
+      "Aged longer than the classic white, Bacardi's dark rum brings deeper caramel and oak notes, best enjoyed neat, on the rocks, or in a Cuba Libre.",
+  },
+  {
+    slug: "kraken-rum",
+    name: "Kraken",
+    category: "spirits",
+    subcategory: "rums",
+    price: "€7.00",
+    tagline: "Bold black spiced rum",
+    ingredients: [],
+    history:
+      "Named after the legendary sea monster, Kraken is a jet-black spiced rum from Trinidad & Tobago, known for its bold molasses, vanilla and spice character.",
+  },
+  {
+    slug: "dead-mans-fingers",
+    name: "Dead Man's Fingers",
+    category: "spirits",
+    subcategory: "rums",
+    price: "€7.00",
+    tagline: "Cornish spiced rum",
+    ingredients: [],
+    history:
+      "A newer name on the rum scene, this Cornwall-distilled spiced rum has built a cult following for its bold branding and punchy, spice-forward flavour.",
+  },
+  {
+    slug: "havana-club-7",
+    name: "Havana Club Seven",
+    category: "spirits",
+    subcategory: "rums",
+    price: "€8.00",
+    tagline: "Aged 7 years, rich Cuban rum",
+    ingredients: [],
+    history:
+      "Distilled and aged in Cuba for seven years, this is one of the island's most celebrated rums — deep, smooth and traditionally sipped neat or over a single large ice cube.",
+  },
+  {
+    slug: "don-papa",
+    name: "Don Papa",
+    category: "spirits",
+    subcategory: "rums",
+    price: "€8.50",
+    tagline: "Smooth Filipino rum, aged in the mountains",
+    ingredients: [],
+    history:
+      "Named after a local folk hero, Don Papa is aged in the foothills of Mount Kanlaon in the Philippines, prized for its smooth, naturally sweet caramel and vanilla character.",
+  },
+  {
+    slug: "don-papa-baroko",
+    name: "Don Papa Baroko",
+    category: "spirits",
+    subcategory: "rums",
+    price: "€9.00",
+    tagline: "Don Papa infused with rich cacao",
+    ingredients: [],
+    history:
+      "A cacao-infused twist on the original Don Papa, blending the rum's signature smoothness with rich Filipino cocoa for a dessert-like sipping rum.",
+  },
+  {
     slug: "mythos",
     name: "Mythos",
     category: "beers",
@@ -243,10 +359,24 @@ export function getItemsByCategory(categoryId: string) {
   return menuItems.filter((item) => item.category === categoryId);
 }
 
-export function getTagsForCategory(categoryId: string): TagId[] {
+export function getItemsBySubcategory(categoryId: string, subcategoryId: string) {
+  return menuItems.filter(
+    (item) => item.category === categoryId && item.subcategory === subcategoryId
+  );
+}
+
+export function getCategoryById(categoryId: string) {
+  return categories.find((cat) => cat.id === categoryId);
+}
+
+export function getTagsForItems(items: MenuItem[]): TagId[] {
   const used = new Set<TagId>();
-  for (const item of getItemsByCategory(categoryId)) {
+  for (const item of items) {
     item.tags?.forEach((t) => used.add(t));
   }
   return (Object.keys(tagInfo) as TagId[]).filter((id) => used.has(id));
+}
+
+export function getTagsForCategory(categoryId: string): TagId[] {
+  return getTagsForItems(getItemsByCategory(categoryId));
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemBySlug, menuItems } from "@/data/menu";
+import { getItemBySlug, getCategoryById, menuItems } from "@/data/menu";
 import { tags as tagInfo } from "@/data/tags";
 import TagIcon from "@/components/TagIcon";
 
@@ -17,10 +17,19 @@ export default async function DrinkDetailPage({
   const item = getItemBySlug(slug);
   if (!item) notFound();
 
+  const category = getCategoryById(item.category);
+  const subcategory = category?.subcategories?.find(
+    (s) => s.id === item.subcategory
+  );
+  const backHref = subcategory
+    ? `/category/${category!.id}/${subcategory.id}`
+    : "/";
+  const backLabel = subcategory ? `Back to ${subcategory.name}` : "Back to menu";
+
   return (
     <div className="px-5 pt-6 pb-10">
       <Link
-        href="/"
+        href={backHref}
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-strong"
       >
         <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
@@ -32,9 +41,14 @@ export default async function DrinkDetailPage({
             strokeLinejoin="round"
           />
         </svg>
-        Back to menu
+        {backLabel}
       </Link>
 
+      {subcategory && (
+        <p className="mb-1 text-xs uppercase tracking-[0.2em] text-gold">
+          {category!.name} · {subcategory.name}
+        </p>
+      )}
       <h1 className="font-display text-4xl leading-tight text-foreground">
         {item.name}
       </h1>
@@ -56,22 +70,24 @@ export default async function DrinkDetailPage({
 
       <p className="mt-4 text-2xl font-medium text-gold-soft">{item.price}</p>
 
-      <div className="mt-8 border-t border-line pt-6">
-        <h2 className="mb-3 text-xs uppercase tracking-[0.2em] text-gold">
-          Ingredients
-        </h2>
-        <ul className="flex flex-col gap-2">
-          {item.ingredients.map((ing) => (
-            <li
-              key={ing}
-              className="flex items-center gap-2.5 text-[15px] text-foreground"
-            >
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
-              {ing}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {item.ingredients.length > 0 && (
+        <div className="mt-8 border-t border-line pt-6">
+          <h2 className="mb-3 text-xs uppercase tracking-[0.2em] text-gold">
+            Ingredients
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {item.ingredients.map((ing) => (
+              <li
+                key={ing}
+                className="flex items-center gap-2.5 text-[15px] text-foreground"
+              >
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
+                {ing}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {item.history && (
         <div className="mt-8 border-t border-line pt-6">
