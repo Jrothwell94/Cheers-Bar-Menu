@@ -6,15 +6,12 @@ import LinkCard from "@/components/LinkCard";
 export default function MenuPage() {
   return (
     <div>
-      <header className="px-5 pt-8 pb-5">
-        <p className="text-xs uppercase tracking-[0.2em] text-gold">
-          Zakynthos
-        </p>
+      <header className="flex flex-col items-center px-5 pt-6 pb-5 text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/logo.svg"
+          src="/logo.png"
           alt="Cheers Bar"
-          className="mt-1 h-auto w-full max-w-[280px]"
+          className="h-auto w-full max-w-[160px]"
         />
         <p className="mt-2.5 text-sm text-muted">
           Tap any drink to see what&apos;s in it — and the story behind it.
