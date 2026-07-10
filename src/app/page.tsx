@@ -1,5 +1,6 @@
-import { categories, getItemsByCategory } from "@/data/menu";
+import { categories, getItemsByCategory, getTagsForCategory } from "@/data/menu";
 import DrinkCard from "@/components/DrinkCard";
+import TagLegend from "@/components/TagLegend";
 
 export default function MenuPage() {
   return (
@@ -30,11 +31,13 @@ export default function MenuPage() {
         {categories.map((cat) => {
           const items = getItemsByCategory(cat.id);
           if (items.length === 0) return null;
+          const categoryTags = getTagsForCategory(cat.id);
           return (
             <section key={cat.id} id={cat.id} className="scroll-mt-6">
               <h2 className="mb-3 font-display text-xl text-gold-soft">
                 {cat.name}
               </h2>
+              <TagLegend tagIds={categoryTags} />
               <div className="flex flex-col gap-2.5">
                 {items.map((item) => (
                   <DrinkCard key={item.slug} item={item} />

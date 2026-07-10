@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { MenuItem } from "@/data/menu";
+import TagIcon from "./TagIcon";
 
 export default function DrinkCard({ item }: { item: MenuItem }) {
   return (
@@ -8,9 +9,18 @@ export default function DrinkCard({ item }: { item: MenuItem }) {
       className="flex items-center justify-between gap-4 rounded-xl border border-line bg-surface px-4 py-3.5 active:bg-surface-raised"
     >
       <div className="min-w-0">
-        <h3 className="truncate font-display text-lg leading-snug text-foreground">
-          {item.name}
-        </h3>
+        <div className="flex items-center gap-1.5">
+          <h3 className="truncate font-display text-lg leading-snug text-foreground">
+            {item.name}
+          </h3>
+          {item.tags && item.tags.length > 0 && (
+            <span className="flex shrink-0 items-center gap-1">
+              {item.tags.map((t) => (
+                <TagIcon key={t} tag={t} className="h-3.5 w-3.5" />
+              ))}
+            </span>
+          )}
+        </div>
         <p className="mt-0.5 truncate text-[13px] text-muted">{item.tagline}</p>
       </div>
       <div className="flex shrink-0 items-center gap-2">

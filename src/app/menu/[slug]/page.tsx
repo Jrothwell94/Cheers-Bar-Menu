@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getItemBySlug, menuItems } from "@/data/menu";
+import { tags as tagInfo } from "@/data/tags";
+import TagIcon from "@/components/TagIcon";
 
 export function generateStaticParams() {
   return menuItems.map((item) => ({ slug: item.slug }));
@@ -37,6 +39,21 @@ export default async function DrinkDetailPage({
         {item.name}
       </h1>
       <p className="mt-1.5 text-base text-muted">{item.tagline}</p>
+
+      {item.tags && item.tags.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {item.tags.map((t) => (
+            <span
+              key={t}
+              className="flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[12px] text-muted-strong"
+            >
+              <TagIcon tag={t} className="h-3.5 w-3.5" />
+              {tagInfo[t].label}
+            </span>
+          ))}
+        </div>
+      )}
+
       <p className="mt-4 text-2xl font-medium text-gold-soft">{item.price}</p>
 
       <div className="mt-8 border-t border-line pt-6">
