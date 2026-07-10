@@ -6,6 +6,7 @@ export type MenuItem = {
   name: string;
   category: string;
   subcategory?: string;
+  group?: string;
   price: string;
   tagline: string;
   ingredients: string[];
@@ -19,14 +20,32 @@ export type MenuSubcategory = {
   name: string;
 };
 
+export type MenuGroup = {
+  id: string;
+  name: string;
+};
+
 export type MenuCategory = {
   id: string;
   name: string;
   subcategories?: MenuSubcategory[];
+  groups?: MenuGroup[];
 };
 
 export const categories: MenuCategory[] = [
-  { id: "cocktails", name: "Cocktails" },
+  {
+    id: "cocktails",
+    name: "Cocktails",
+    groups: [
+      { id: "vodka", name: "Vodka Based" },
+      { id: "rum", name: "Rum Based" },
+      { id: "gin", name: "Gin Based" },
+      { id: "tequila", name: "Tequila Based" },
+      { id: "whiskey", name: "Whiskey Based" },
+      { id: "other", name: "Other" },
+      { id: "mocktails", name: "Mocktails" },
+    ],
+  },
   { id: "greek-favourites", name: "Greek Favourites" },
   {
     id: "spirits",
@@ -48,6 +67,7 @@ export const menuItems: MenuItem[] = [
     slug: "mojito",
     name: "Mojito",
     category: "cocktails",
+    group: "rum",
     price: "€8.50",
     tagline: "Cuban rum highball with mint & lime",
     ingredients: ["White rum", "Fresh lime juice", "Sugar", "Soda water", "Mint leaves"],
@@ -59,6 +79,7 @@ export const menuItems: MenuItem[] = [
     slug: "margarita",
     name: "Margarita",
     category: "cocktails",
+    group: "tequila",
     price: "€8.50",
     tagline: "Tequila, lime and orange liqueur, salt rim",
     ingredients: ["Tequila", "Triple sec", "Fresh lime juice", "Salt rim"],
@@ -70,6 +91,7 @@ export const menuItems: MenuItem[] = [
     slug: "old-fashioned",
     name: "Old Fashioned",
     category: "cocktails",
+    group: "whiskey",
     price: "€9.50",
     tagline: "Whiskey, sugar and bitters, stirred not shaken",
     ingredients: ["Bourbon or rye whiskey", "Sugar cube", "Angostura bitters", "Orange twist"],
@@ -81,6 +103,7 @@ export const menuItems: MenuItem[] = [
     slug: "negroni",
     name: "Negroni",
     category: "cocktails",
+    group: "gin",
     price: "€9.00",
     tagline: "Bold, bitter Italian aperitif",
     ingredients: ["Gin", "Campari", "Sweet vermouth", "Orange peel"],
@@ -92,6 +115,7 @@ export const menuItems: MenuItem[] = [
     slug: "espresso-martini",
     name: "Espresso Martini",
     category: "cocktails",
+    group: "vodka",
     price: "€9.50",
     tagline: "Vodka, coffee liqueur and a hit of espresso",
     ingredients: ["Vodka", "Coffee liqueur", "Fresh espresso", "Sugar syrup"],
@@ -103,6 +127,7 @@ export const menuItems: MenuItem[] = [
     slug: "aperol-spritz",
     name: "Aperol Spritz",
     category: "cocktails",
+    group: "other",
     price: "€8.00",
     tagline: "Bright, bittersweet Italian aperitivo",
     ingredients: ["Aperol", "Prosecco", "Soda water", "Orange slice"],
@@ -114,6 +139,7 @@ export const menuItems: MenuItem[] = [
     slug: "mai-tai",
     name: "Mai Tai",
     category: "cocktails",
+    group: "rum",
     price: "€10.00",
     tagline: "Tiki classic with rum, lime and orgeat",
     ingredients: ["Aged rum", "Lime juice", "Orgeat", "Orange curaçao"],
@@ -125,6 +151,7 @@ export const menuItems: MenuItem[] = [
     slug: "pornstar-martini",
     name: "Pornstar Martini",
     category: "cocktails",
+    group: "vodka",
     price: "€10.00",
     tagline: "Passion fruit & vanilla vodka, Prosecco on the side",
     ingredients: ["Vanilla vodka", "Passion fruit puree", "Passion fruit liqueur", "Lime juice", "Prosecco (side pour)"],
@@ -136,12 +163,25 @@ export const menuItems: MenuItem[] = [
     slug: "frozen-strawberry-daiquiri",
     name: "Frozen Strawberry Daiquiri",
     category: "cocktails",
+    group: "rum",
     price: "€9.00",
     tagline: "Blended rum, strawberry and lime",
     ingredients: ["White rum", "Fresh strawberries", "Lime juice", "Sugar syrup", "Crushed ice"],
     history:
       "The Daiquiri dates back to early 1900s Cuba, named after a mining town near Santiago. The frozen, blended version took off in the mid-20th century as electric blenders became common behind the bar.",
     tags: ["frozen", "fruity", "refreshing"],
+  },
+  {
+    slug: "cheers-sunset",
+    name: "Cheers Sunset (Mocktail)",
+    category: "cocktails",
+    group: "mocktails",
+    price: "€5.50",
+    tagline: "Non-alcoholic tropical sunset in a glass",
+    ingredients: ["Orange juice", "Passion fruit syrup", "Grenadine", "Soda water", "Fresh orange slice"],
+    history:
+      "Our alcohol-free house special, built in layers so the grenadine settles at the base like the sun dipping over the bay — all the ritual of a great cocktail, none of the alcohol.",
+    tags: ["fruity", "refreshing", "tropical"],
   },
   {
     slug: "metaxa",
@@ -328,8 +368,26 @@ export const menuItems: MenuItem[] = [
     category: "soft-drinks",
     price: "€3.00",
     tagline: "Classic, ice-cold",
-    ingredients: ["Coca-Cola"],
+    ingredients: [],
     history: "Some things don't need reinventing.",
+  },
+  {
+    slug: "fanta-orange",
+    name: "Fanta Orange",
+    category: "soft-drinks",
+    price: "€3.00",
+    tagline: "Fizzy orange soft drink",
+    ingredients: [],
+    history: "",
+  },
+  {
+    slug: "sprite",
+    name: "Sprite",
+    category: "soft-drinks",
+    price: "€3.00",
+    tagline: "Crisp lemon-lime soda",
+    ingredients: [],
+    history: "",
   },
   {
     slug: "fresh-lemonade",
@@ -346,7 +404,7 @@ export const menuItems: MenuItem[] = [
     category: "soft-drinks",
     price: "€2.50",
     tagline: "Chilled and bubbly",
-    ingredients: ["Sparkling water"],
+    ingredients: [],
     history: "",
   },
 ];
@@ -362,6 +420,12 @@ export function getItemsByCategory(categoryId: string) {
 export function getItemsBySubcategory(categoryId: string, subcategoryId: string) {
   return menuItems.filter(
     (item) => item.category === categoryId && item.subcategory === subcategoryId
+  );
+}
+
+export function getItemsByGroup(categoryId: string, groupId: string) {
+  return menuItems.filter(
+    (item) => item.category === categoryId && item.group === groupId
   );
 }
 

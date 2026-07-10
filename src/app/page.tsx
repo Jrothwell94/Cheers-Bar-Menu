@@ -12,7 +12,7 @@ export default function MenuPage() {
         </p>
         <h1 className="font-display text-4xl text-foreground">Cheers Bar</h1>
         <p className="mt-1.5 text-sm text-muted">
-          Tap any drink to see what's in it — and the story behind it.
+          Tap any drink to see what&apos;s in it — and the story behind it.
         </p>
       </header>
 
@@ -20,7 +20,9 @@ export default function MenuPage() {
         {categories.map((cat) => (
           <a
             key={cat.id}
-            href={cat.subcategories ? `/category/${cat.id}` : `#${cat.id}`}
+            href={
+              cat.subcategories || cat.groups ? `/category/${cat.id}` : `#${cat.id}`
+            }
             className="shrink-0 rounded-full border border-line bg-surface px-3.5 py-1.5 text-xs text-muted-strong"
           >
             {cat.name}
@@ -40,6 +42,21 @@ export default function MenuPage() {
                   href={`/category/${cat.id}`}
                   title={`Browse ${cat.name}`}
                   subtitle={cat.subcategories.map((s) => s.name).join(", ")}
+                />
+              </section>
+            );
+          }
+
+          if (cat.groups) {
+            return (
+              <section key={cat.id} id={cat.id} className="scroll-mt-6">
+                <h2 className="mb-3 font-display text-xl text-gold-soft">
+                  {cat.name}
+                </h2>
+                <LinkCard
+                  href={`/category/${cat.id}`}
+                  title={`Browse ${cat.name}`}
+                  subtitle={`${getItemsByCategory(cat.id).length} drinks, grouped by spirit`}
                 />
               </section>
             );

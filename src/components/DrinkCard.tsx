@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { MenuItem } from "@/data/menu";
 import TagIcon from "./TagIcon";
@@ -8,7 +9,17 @@ export default function DrinkCard({ item }: { item: MenuItem }) {
       href={`/menu/${item.slug}`}
       className="flex items-center justify-between gap-4 rounded-xl border border-line bg-surface px-4 py-3.5 active:bg-surface-raised"
     >
-      <div className="min-w-0">
+      {item.image && (
+        <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-surface-raised">
+          <Image
+            src={item.image}
+            alt={item.name}
+            fill
+            className="object-contain p-1"
+          />
+        </div>
+      )}
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <h3 className="truncate font-display text-lg leading-snug text-foreground">
             {item.name}

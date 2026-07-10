@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getItemBySlug, getCategoryById, menuItems } from "@/data/menu";
@@ -27,23 +28,38 @@ export default async function DrinkDetailPage({
   const backLabel = subcategory ? `Back to ${subcategory.name}` : "Back to menu";
 
   return (
-    <div className="px-5 pt-6 pb-10">
-      <Link
-        href={backHref}
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-strong"
-      >
-        <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-          <path
-            d="M15 6l-6 6 6 6"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-        {backLabel}
-      </Link>
+    <div className="pb-10">
+      <div className="px-5 pt-6">
+        <Link
+          href={backHref}
+          className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-strong"
+        >
+          <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
+            <path
+              d="M15 6l-6 6 6 6"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          {backLabel}
+        </Link>
+      </div>
 
+      {item.image && (
+        <div className="relative mb-6 aspect-[4/3] w-full bg-surface-raised">
+          <Image
+            src={item.image}
+            alt={item.name}
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+      )}
+
+      <div className="px-5">
       {subcategory && (
         <p className="mb-1 text-xs uppercase tracking-[0.2em] text-gold">
           {category!.name} · {subcategory.name}
@@ -99,6 +115,7 @@ export default async function DrinkDetailPage({
           </p>
         </div>
       )}
+      </div>
     </div>
   );
 }
