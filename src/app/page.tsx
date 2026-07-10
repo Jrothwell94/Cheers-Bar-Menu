@@ -10,8 +10,13 @@ export default function MenuPage() {
         <p className="text-xs uppercase tracking-[0.2em] text-gold">
           Zakynthos
         </p>
-        <h1 className="font-display text-4xl text-foreground">Cheers Bar</h1>
-        <p className="mt-1.5 text-sm text-muted">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo.svg"
+          alt="Cheers Bar"
+          className="mt-1 h-auto w-full max-w-[280px]"
+        />
+        <p className="mt-2.5 text-sm text-muted">
           Tap any drink to see what&apos;s in it — and the story behind it.
         </p>
       </header>

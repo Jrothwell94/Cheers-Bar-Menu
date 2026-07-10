@@ -2,6 +2,8 @@ import PageHeader from "@/components/PageHeader";
 import { about } from "@/data/about";
 
 export default function AboutPage() {
+  const mapQuery = encodeURIComponent(about.details.address);
+
   return (
     <div>
       <PageHeader eyebrow="Cheers Bar" title={about.heading} />
@@ -24,6 +26,26 @@ export default function AboutPage() {
               {about.details.address}
             </p>
           </div>
+
+          <div className="overflow-hidden rounded-lg border border-line">
+            <iframe
+              title="Cheers Bar location"
+              src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
+              className="h-48 w-full"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1.5 rounded-full border border-line bg-surface-raised py-2 text-sm text-gold-soft"
+          >
+            Get Directions
+          </a>
+
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-gold">
               Opening Hours

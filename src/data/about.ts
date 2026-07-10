@@ -7,8 +7,8 @@ export const about = {
     "You could also mention: opening hours, how long you've been open, any signature drinks, and what makes the atmosphere special.",
   ],
   details: {
-    address: "Cheers Bar, Zakynthos, Greece",
-    hours: "Add your opening hours here",
+    address: "Cheers Bar, Alykes, Zakynthos 29090, Greece",
+    hours: "17:00 – Late, every day",
     phone: "Add a contact number here",
   },
 };
