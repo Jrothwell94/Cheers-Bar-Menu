@@ -10,7 +10,7 @@ const tabs = [
     icon: (active: boolean) => (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
         <path
-          d="M6 2v7a3 3 0 0 0 3 3v10M6 2v7M9 2v7M6 6H4.5a1 1 0 0 0-1 1v0M18 2c-1.5 0-3 1.5-3 4v4a2 2 0 0 0 2 2h1v10"
+          d="M4 4h16l-8 9-8-9ZM12 13v6M8.5 19h7"
           stroke={active ? "var(--gold)" : "currentColor"}
           strokeWidth="1.6"
           strokeLinecap="round"
