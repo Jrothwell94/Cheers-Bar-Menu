@@ -9,6 +9,6 @@ export const about = {
   details: {
     address: "Cheers Bar, Alykes, Zakynthos 29090, Greece",
     hours: "17:00 – Late, every day",
-    phone: "Add a contact number here",
+    phone: "2695 083558",
   },
 };
