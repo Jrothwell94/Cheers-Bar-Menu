@@ -585,6 +585,15 @@ export const menuItems: MenuItem[] = [
     history: "Our house rosé — light, dry and perfect for a sunset drink.",
   },
   {
+    slug: "wine-carafe",
+    name: "1/2 Litre Carafe",
+    category: "wine",
+    price: "€5.00",
+    tagline: "House wine by the carafe, share-sized",
+    ingredients: ["House wine"],
+    history: "Half a litre of our house wine — good for sharing, or not.",
+  },
+  {
     slug: "coca-cola",
     name: "Coca-Cola",
     category: "soft-drinks",
