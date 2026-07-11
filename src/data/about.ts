@@ -17,4 +17,11 @@ export const about = {
       url: "https://www.facebook.com/share/1DCVJmF5zC/",
     },
   ],
+  // Rating/count are a manual snapshot, not live — update these numbers
+  // every so often to match what Google actually shows.
+  googleReviews: {
+    url: "https://share.google/c0j6flyANu9tgIF5Z",
+    rating: 4.6,
+    count: 63,
+  },
 };

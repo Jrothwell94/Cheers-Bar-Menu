@@ -25,6 +25,22 @@ export default function AboutPage() {
           </p>
         ))}
 
+        <a
+          href={about.googleReviews.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 rounded-xl border border-line bg-surface p-3.5 text-sm text-foreground"
+        >
+          <svg viewBox="0 0 24 24" fill="var(--gold)" className="h-5 w-5 shrink-0">
+            <path d="M12 2.5l2.9 6.2 6.6.7-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.7L12 2.5Z" />
+          </svg>
+          <span>
+            <strong className="text-gold-soft">{about.googleReviews.rating}</strong>
+            {" · "}
+            {about.googleReviews.count} reviews on Google
+          </span>
+        </a>
+
         <div className="mt-4 flex flex-col gap-3 rounded-xl border border-line bg-surface p-4">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-gold">
