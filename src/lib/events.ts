@@ -75,13 +75,17 @@ function zonedDateTimeToUtc(dateISO: string, time: string, timeZone: string): Da
   return new Date(guess);
 }
 
+export function eventStartInstant(event: EventItem, resolvedDate: string): Date {
+  return zonedDateTimeToUtc(resolvedDate, event.time ?? "00:00", BAR_TIMEZONE);
+}
+
 const NOTIFY_LEAD_HOURS = 12;
 
 // The Athens calendar date on which we should notify for this event, so a
 // just-after-midnight kickoff gets flagged the evening before rather than
 // being missed by a same-day "morning of" check.
 function notifyDateFor(event: EventItem, resolvedDate: string): string {
-  const start = zonedDateTimeToUtc(resolvedDate, event.time ?? "00:00", BAR_TIMEZONE);
+  const start = eventStartInstant(event, resolvedDate);
   const notifyAt = new Date(start.getTime() - NOTIFY_LEAD_HOURS * 60 * 60 * 1000);
   return new Intl.DateTimeFormat("en-CA", { timeZone: BAR_TIMEZONE }).format(notifyAt);
 }
@@ -90,6 +94,20 @@ export function getEventsToNotify(events: EventItem[], today = todayISO()) {
   return getResolvedEvents(events, today).filter(
     (event) => notifyDateFor(event, event.date) === today,
   );
+}
+
+// Events whose start time falls within the next `withinHours`, for a
+// frequently-polled "starting soon" reminder rather than a once-daily check.
+export function getEventsStartingSoon(
+  events: EventItem[],
+  withinHours: number,
+  now: Date = new Date(),
+) {
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: BAR_TIMEZONE }).format(now);
+  return getResolvedEvents(events, today).filter((event) => {
+    const msUntilStart = eventStartInstant(event, event.date).getTime() - now.getTime();
+    return msUntilStart > 0 && msUntilStart <= withinHours * 60 * 60 * 1000;
+  });
 }
 
 export function formatEventDate(iso: string): string {
