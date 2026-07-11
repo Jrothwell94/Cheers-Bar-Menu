@@ -10,7 +10,8 @@ const REMINDER_LEAD_HOURS = 2;
 // Polled frequently (every 15-30 min via an external scheduler, since Vercel's
 // free plan only allows daily cron) to catch events starting soon — a second,
 // more urgent nudge on top of the once-daily "coming up" notice.
-export async function GET(req: NextRequest) {
+// Handles both GET (manual/Vercel-style) and POST (QStash's default).
+async function handle(req: NextRequest) {
   const auth = req.headers.get("authorization");
   const querySecret = req.nextUrl.searchParams.get("secret");
   const authorized =
@@ -70,3 +71,6 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ ok: true, sent, events: due.map(({ event }) => event.title) });
 }
+
+export const GET = handle;
+export const POST = handle;
