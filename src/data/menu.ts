@@ -46,7 +46,6 @@ export const categories: MenuCategory[] = [
       { id: "mocktails", name: "Mocktails" },
     ],
   },
-  { id: "greek-favourites", name: "Greek Favourites" },
   {
     id: "spirits",
     name: "Spirits",
@@ -73,9 +72,10 @@ export const categories: MenuCategory[] = [
       { id: "bottles-cans", name: "Bottles / Cans" },
     ],
   },
-  { id: "alcopops", name: "Alcopops" },
   { id: "wine", name: "Wine" },
+  { id: "alcopops", name: "Alcopops" },
   { id: "soft-drinks", name: "Soft Drinks" },
+  { id: "greek-favourites", name: "Greek Favourites" },
 ];
 
 export const menuItems: MenuItem[] = [
@@ -417,8 +417,8 @@ export const menuItems: MenuItem[] = [
       "The Radler style dates back to 1922 Bavaria, when a brewer stretched his beer supply with lemonade for a hot day's cyclists — light, refreshing, and low on the alcohol.",
   },
   {
-    slug: "mamas",
-    name: "Mamas",
+    slug: "mamos",
+    name: "Mamos",
     category: "beers",
     group: "bottles",
     price: "€4.50",
