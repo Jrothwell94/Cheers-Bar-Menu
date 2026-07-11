@@ -11,4 +11,10 @@ export const about = {
     hours: "17:00 – Late, every day",
     phone: "2695 083558",
   },
+  socials: [
+    {
+      name: "Facebook",
+      url: "https://www.facebook.com/share/1DCVJmF5zC/",
+    },
+  ],
 };
