@@ -6,6 +6,10 @@ export async function POST(req: NextRequest) {
   if (!subscription?.endpoint) {
     return NextResponse.json({ error: "Invalid subscription" }, { status: 400 });
   }
-  await redis.sadd(PUSH_SUBSCRIPTIONS_KEY, JSON.stringify(subscription));
-  return NextResponse.json({ ok: true });
+  try {
+    await redis.sadd(PUSH_SUBSCRIPTIONS_KEY, JSON.stringify(subscription));
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "Could not save subscription" }, { status: 500 });
+  }
 }

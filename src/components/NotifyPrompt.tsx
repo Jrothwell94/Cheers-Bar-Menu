@@ -63,11 +63,15 @@ export default function NotifyPrompt() {
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
       });
-      await fetch("/api/push/subscribe", {
+      const res = await fetch("/api/push/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(subscription),
       });
+      if (!res.ok) {
+        await subscription.unsubscribe();
+        throw new Error("save failed");
+      }
       setStatus("subscribed");
     } catch {
       setError("Something went wrong enabling notifications — please try again.");
