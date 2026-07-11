@@ -1,0 +1,21 @@
+{
+  "name": "Cheers Bar",
+  "short_name": "Cheers",
+  "description": "Digital menu, weekly events and more from Cheers Bar, Zakynthos.",
+  "start_url": "/whats-on",
+  "display": "standalone",
+  "background_color": "#14100d",
+  "theme_color": "#14100d",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
