@@ -2,12 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import webpush from "web-push";
 import { redis, PUSH_SUBSCRIPTIONS_KEY } from "@/lib/redis";
 import { events } from "@/data/whats-on";
-import { todayISO, getTodaysEvents } from "@/lib/events";
+import { todayISO, getEventsToNotify, formatEventDate } from "@/lib/events";
 import { VAPID_PUBLIC_KEY, VAPID_SUBJECT } from "@/lib/push-config";
 
 export async function GET(req: NextRequest) {
+  // Vercel Cron sends the secret as a Bearer header; a `?secret=` query param
+  // is also accepted so this can be triggered manually from a phone browser.
   const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  const querySecret = req.nextUrl.searchParams.get("secret");
+  const authorized =
+    auth === `Bearer ${process.env.CRON_SECRET}` ||
+    (!!querySecret && querySecret === process.env.CRON_SECRET);
+  if (!authorized) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -17,9 +23,9 @@ export async function GET(req: NextRequest) {
   webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
 
   const today = todayISO();
-  const todaysEvents = getTodaysEvents(events, today);
-  if (todaysEvents.length === 0) {
-    return NextResponse.json({ ok: true, sent: 0, reason: "no events today" });
+  const toNotify = getEventsToNotify(events, today);
+  if (toNotify.length === 0) {
+    return NextResponse.json({ ok: true, sent: 0, reason: "nothing to notify today" });
   }
 
   const notifiedKey = `push:notified:${today}`;
@@ -28,12 +34,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, sent: 0, reason: "already sent today" });
   }
 
-  const title =
-    todaysEvents.length === 1 ? `Tonight at Cheers: ${todaysEvents[0].title}` : "What's on today at Cheers";
-  const body =
-    todaysEvents.length === 1
-      ? [todaysEvents[0].time, todaysEvents[0].description].filter(Boolean).join(" — ")
-      : todaysEvents.map((event) => event.title).join(" · ");
+  const title = toNotify.length === 1 ? `Coming up at Cheers: ${toNotify[0].title}` : "Coming up at Cheers";
+  const body = toNotify
+    .map((event) =>
+      [`${formatEventDate(event.date)}${event.time ? ` · ${event.time}` : ""}`, event.title]
+        .filter(Boolean)
+        .join(" — "),
+    )
+    .join("\n");
   const payload = JSON.stringify({ title, body, url: "/whats-on" });
 
   const subscriptions = await redis.smembers(PUSH_SUBSCRIPTIONS_KEY);
