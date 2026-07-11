@@ -58,7 +58,7 @@ export default function MenuPage() {
                 <LinkCard
                   href={`/category/${cat.id}`}
                   title={`Browse ${cat.name}`}
-                  subtitle={`${getItemsByCategory(cat.id).length} drinks, grouped by spirit`}
+                  subtitle={cat.groups.map((g) => g.name).join(", ")}
                 />
               </section>
             );
