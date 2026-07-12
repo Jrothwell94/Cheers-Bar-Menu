@@ -9,3 +9,12 @@ export const redis = new Redis({
 });
 
 export const PUSH_SUBSCRIPTIONS_KEY = "push:subscriptions";
+
+// @upstash/redis automatically JSON-serializes/deserializes set members, so
+// sadd/smembers/srem all work with plain objects — never JSON.stringify or
+// JSON.parse them yourself, or you'll double-encode/decode.
+export type StoredPushSubscription = {
+  endpoint: string;
+  keys: { p256dh: string; auth: string };
+  expirationTime?: number | null;
+};

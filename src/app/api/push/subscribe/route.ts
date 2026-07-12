@@ -7,7 +7,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid subscription" }, { status: 400 });
   }
   try {
-    await redis.sadd(PUSH_SUBSCRIPTIONS_KEY, JSON.stringify(subscription));
+    // @upstash/redis serializes objects automatically — don't JSON.stringify here.
+    await redis.sadd(PUSH_SUBSCRIPTIONS_KEY, subscription);
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Could not save subscription" }, { status: 500 });

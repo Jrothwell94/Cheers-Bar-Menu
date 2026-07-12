@@ -1,5 +1,5 @@
 import webpush from "web-push";
-import { redis, PUSH_SUBSCRIPTIONS_KEY } from "@/lib/redis";
+import { redis, PUSH_SUBSCRIPTIONS_KEY, type StoredPushSubscription } from "@/lib/redis";
 import { VAPID_PUBLIC_KEY, VAPID_SUBJECT } from "@/lib/push-config";
 
 export type PushPayload = {
@@ -23,14 +23,13 @@ export async function sendPushToAll(
   }
   webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
 
-  const subscriptions = await redis.smembers(PUSH_SUBSCRIPTIONS_KEY);
+  const subscriptions = await redis.smembers<StoredPushSubscription[]>(PUSH_SUBSCRIPTIONS_KEY);
   let sent = 0;
   const failures: PushFailure[] = [];
 
   await Promise.all(
-    subscriptions.map(async (raw) => {
+    subscriptions.map(async (subscription) => {
       try {
-        const subscription = JSON.parse(raw);
         await webpush.sendNotification(subscription, JSON.stringify(payload));
         sent += 1;
       } catch (err) {
@@ -39,7 +38,7 @@ export async function sendPushToAll(
         const message = (err as { message?: string }).message ?? "Unknown error";
         failures.push({ statusCode, message: body || message });
         if (statusCode === 404 || statusCode === 410) {
-          await redis.srem(PUSH_SUBSCRIPTIONS_KEY, raw);
+          await redis.srem(PUSH_SUBSCRIPTIONS_KEY, subscription);
         }
       }
     }),
