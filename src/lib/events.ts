@@ -110,6 +110,20 @@ export function getEventsStartingSoon(
   });
 }
 
+const HIDE_AFTER_HOURS = 5;
+
+// Drops one-off events once they're `HIDE_AFTER_HOURS` past their start time,
+// so the page doesn't keep showing things that have already happened.
+// Recurring events are exempt — they already resolve to their next occurrence.
+export function getVisibleEvents(events: EventItem[], now: Date = new Date()) {
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: BAR_TIMEZONE }).format(now);
+  return getResolvedEvents(events, today).filter((event) => {
+    if (event.recurring === "weekly") return true;
+    const start = eventStartInstant(event, event.date);
+    return now.getTime() < start.getTime() + HIDE_AFTER_HOURS * 60 * 60 * 1000;
+  });
+}
+
 export function formatEventDate(iso: string): string {
   return new Intl.DateTimeFormat("en-GB", {
     timeZone: BAR_TIMEZONE,

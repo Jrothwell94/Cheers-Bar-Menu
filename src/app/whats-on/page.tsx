@@ -2,14 +2,14 @@ import PageHeader from "@/components/PageHeader";
 import EventCard from "@/components/EventCard";
 import NotifyPrompt from "@/components/NotifyPrompt";
 import { events } from "@/data/whats-on";
-import { getResolvedEvents } from "@/lib/events";
+import { getVisibleEvents } from "@/lib/events";
 
-// Recurring events resolve to "today or later" — re-check daily so the
-// page doesn't go stale between deploys.
-export const revalidate = 86400;
+// Events are hidden a few hours after they start, so re-check often enough
+// that the page doesn't keep showing things that already happened.
+export const revalidate = 1800;
 
 export default function WhatsOnPage() {
-  const sorted = getResolvedEvents(events).sort((a, b) => a.date.localeCompare(b.date));
+  const sorted = getVisibleEvents(events).sort((a, b) => a.date.localeCompare(b.date));
 
   return (
     <div>
