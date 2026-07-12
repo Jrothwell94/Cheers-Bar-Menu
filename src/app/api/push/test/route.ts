@@ -8,11 +8,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { sent } = await sendPushToAll({
-    title: "Test notification from Cheers Bar",
-    body: "If you can see this, notifications are working.",
-    url: "/whats-on",
-  });
-
-  return NextResponse.json({ ok: true, sent });
+  try {
+    const { sent, subscriptionCount, failures } = await sendPushToAll({
+      title: "Test notification from Cheers Bar",
+      body: "If you can see this, notifications are working.",
+      url: "/whats-on",
+    });
+    return NextResponse.json({ ok: true, sent, subscriptionCount, failures });
+  } catch (err) {
+    return NextResponse.json(
+      { ok: false, error: (err as Error).message },
+      { status: 500 },
+    );
+  }
 }

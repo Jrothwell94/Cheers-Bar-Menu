@@ -8,9 +8,16 @@ export type PushPayload = {
   url: string;
 };
 
+export type PushFailure = {
+  statusCode?: number;
+  message: string;
+};
+
 // Sends `payload` to every stored subscription, pruning any that have
 // expired or been revoked. Throws if VAPID_PRIVATE_KEY isn't configured.
-export async function sendPushToAll(payload: PushPayload): Promise<{ sent: number }> {
+export async function sendPushToAll(
+  payload: PushPayload,
+): Promise<{ sent: number; subscriptionCount: number; failures: PushFailure[] }> {
   if (!process.env.VAPID_PRIVATE_KEY) {
     throw new Error("VAPID_PRIVATE_KEY is not configured");
   }
@@ -18,6 +25,7 @@ export async function sendPushToAll(payload: PushPayload): Promise<{ sent: numbe
 
   const subscriptions = await redis.smembers(PUSH_SUBSCRIPTIONS_KEY);
   let sent = 0;
+  const failures: PushFailure[] = [];
 
   await Promise.all(
     subscriptions.map(async (raw) => {
@@ -27,6 +35,9 @@ export async function sendPushToAll(payload: PushPayload): Promise<{ sent: numbe
         sent += 1;
       } catch (err) {
         const statusCode = (err as { statusCode?: number }).statusCode;
+        const body = (err as { body?: string }).body;
+        const message = (err as { message?: string }).message ?? "Unknown error";
+        failures.push({ statusCode, message: body || message });
         if (statusCode === 404 || statusCode === 410) {
           await redis.srem(PUSH_SUBSCRIPTIONS_KEY, raw);
         }
@@ -34,7 +45,7 @@ export async function sendPushToAll(payload: PushPayload): Promise<{ sent: numbe
     }),
   );
 
-  return { sent };
+  return { sent, subscriptionCount: subscriptions.length, failures };
 }
 
 export function requireAuthorized(req: Request): boolean {
