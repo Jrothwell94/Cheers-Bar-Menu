@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import webpush from "web-push";
-import { redis, PUSH_SUBSCRIPTIONS_KEY } from "@/lib/redis";
+import { redis } from "@/lib/redis";
 import { events } from "@/data/whats-on";
 import { getEventsStartingSoon, formatEventDate } from "@/lib/events";
-import { VAPID_PUBLIC_KEY, VAPID_SUBJECT } from "@/lib/push-config";
+import { requireAuthorized, sendPushToAll } from "@/lib/send-push";
 
 const REMINDER_LEAD_HOURS = 2;
 
@@ -12,19 +11,9 @@ const REMINDER_LEAD_HOURS = 2;
 // more urgent nudge on top of the once-daily "coming up" notice.
 // Handles both GET (manual/Vercel-style) and POST (QStash's default).
 async function handle(req: NextRequest) {
-  const auth = req.headers.get("authorization");
-  const querySecret = req.nextUrl.searchParams.get("secret");
-  const authorized =
-    auth === `Bearer ${process.env.CRON_SECRET}` ||
-    (!!querySecret && querySecret === process.env.CRON_SECRET);
-  if (!authorized) {
+  if (!requireAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  if (!process.env.VAPID_PRIVATE_KEY) {
-    return NextResponse.json({ error: "VAPID_PRIVATE_KEY is not configured" }, { status: 500 });
-  }
-  webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
 
   const soon = getEventsStartingSoon(events, REMINDER_LEAD_HOURS);
   const due = [];
@@ -47,25 +36,8 @@ async function handle(req: NextRequest) {
         .join(" — "),
     )
     .join("\n");
-  const payload = JSON.stringify({ title, body, url: "/whats-on" });
 
-  const subscriptions = await redis.smembers(PUSH_SUBSCRIPTIONS_KEY);
-  let sent = 0;
-
-  await Promise.all(
-    subscriptions.map(async (raw) => {
-      try {
-        const subscription = JSON.parse(raw);
-        await webpush.sendNotification(subscription, payload);
-        sent += 1;
-      } catch (err) {
-        const statusCode = (err as { statusCode?: number }).statusCode;
-        if (statusCode === 404 || statusCode === 410) {
-          await redis.srem(PUSH_SUBSCRIPTIONS_KEY, raw);
-        }
-      }
-    }),
-  );
+  const { sent } = await sendPushToAll({ title, body, url: "/whats-on" });
 
   await Promise.all(due.map(({ reminderKey }) => redis.set(reminderKey, "1", { ex: 60 * 60 * 26 })));
 
