@@ -19,6 +19,22 @@ function isStandalone() {
   return window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
 }
 
+// The browser knowing about a subscription doesn't mean our server does —
+// re-sync on every load so a past failed save doesn't strand someone in a
+// false "you're subscribed" state forever.
+async function syncSubscription(subscription: PushSubscription): Promise<boolean> {
+  try {
+    const res = await fetch("/api/push/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(subscription),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 type Status = "checking" | "ios-install" | "unsupported" | "denied" | "subscribed" | "ready";
 
 export default function NotifyPrompt() {
@@ -45,7 +61,12 @@ export default function NotifyPrompt() {
 
     navigator.serviceWorker.ready.then(async (reg) => {
       const sub = await reg.pushManager.getSubscription();
-      setStatus(sub ? "subscribed" : "ready");
+      if (!sub) {
+        setStatus("ready");
+        return;
+      }
+      const synced = await syncSubscription(sub);
+      setStatus(synced ? "subscribed" : "ready");
     });
   }, []);
 
@@ -63,12 +84,8 @@ export default function NotifyPrompt() {
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
       });
-      const res = await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(subscription),
-      });
-      if (!res.ok) {
+      const synced = await syncSubscription(subscription);
+      if (!synced) {
         await subscription.unsubscribe();
         throw new Error("save failed");
       }
