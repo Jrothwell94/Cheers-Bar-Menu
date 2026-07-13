@@ -2,6 +2,7 @@ import { categories, getItemsByCategory, getTagsForCategory } from "@/data/menu"
 import DrinkCard from "@/components/DrinkCard";
 import TagLegend from "@/components/TagLegend";
 import LinkCard from "@/components/LinkCard";
+import NowPlaying from "@/components/NowPlaying";
 import { getTrendingSlugs } from "@/lib/views";
 
 // Trending badges are computed from view counts that change over time.
@@ -23,6 +24,10 @@ export default async function MenuPage() {
           Tap any drink to see what&apos;s in it — and the story behind it.
         </p>
       </header>
+
+      <div className="px-5 pb-5">
+        <NowPlaying />
+      </div>
 
       <nav className="flex gap-2 overflow-x-auto px-5 pb-5 [scrollbar-width:none]">
         {categories.map((cat) => (
