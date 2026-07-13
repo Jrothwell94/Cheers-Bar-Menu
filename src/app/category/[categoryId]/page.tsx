@@ -10,6 +10,10 @@ import PageHeader from "@/components/PageHeader";
 import LinkCard from "@/components/LinkCard";
 import DrinkCard from "@/components/DrinkCard";
 import TagLegend from "@/components/TagLegend";
+import { getTrendingSlugs } from "@/lib/views";
+
+// Trending badges are computed from view counts that change over time.
+export const revalidate = 1800;
 
 export function generateStaticParams() {
   return categories
@@ -72,6 +76,7 @@ export default async function CategoryPage({
 
   const groups = category.groups!;
   const categoryTags = getTagsForCategory(category.id);
+  const trending = await getTrendingSlugs();
 
   return (
     <div>
@@ -90,7 +95,7 @@ export default async function CategoryPage({
                 </h2>
                 <div className="flex flex-col gap-2.5">
                   {items.map((item) => (
-                    <DrinkCard key={item.slug} item={item} />
+                    <DrinkCard key={item.slug} item={item} trending={trending.has(item.slug)} />
                   ))}
                 </div>
               </section>

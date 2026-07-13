@@ -3,7 +3,13 @@ import Link from "next/link";
 import type { MenuItem } from "@/data/menu";
 import TagIcon from "./TagIcon";
 
-export default function DrinkCard({ item }: { item: MenuItem }) {
+export default function DrinkCard({
+  item,
+  trending = false,
+}: {
+  item: MenuItem;
+  trending?: boolean;
+}) {
   return (
     <Link
       href={`/menu/${item.slug}`}
@@ -24,6 +30,11 @@ export default function DrinkCard({ item }: { item: MenuItem }) {
           <h3 className="truncate font-display text-lg leading-snug text-foreground">
             {item.name}
           </h3>
+          {trending && (
+            <span className="shrink-0 rounded-full bg-surface-raised px-2 py-0.5 text-[10px] uppercase tracking-wide text-gold">
+              🔥 Trending
+            </span>
+          )}
           {item.tags && item.tags.length > 0 && (
             <span className="flex shrink-0 items-center gap-1">
               {item.tags.map((t) => (

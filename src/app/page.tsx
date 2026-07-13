@@ -2,8 +2,14 @@ import { categories, getItemsByCategory, getTagsForCategory } from "@/data/menu"
 import DrinkCard from "@/components/DrinkCard";
 import TagLegend from "@/components/TagLegend";
 import LinkCard from "@/components/LinkCard";
+import { getTrendingSlugs } from "@/lib/views";
 
-export default function MenuPage() {
+// Trending badges are computed from view counts that change over time.
+export const revalidate = 1800;
+
+export default async function MenuPage() {
+  const trending = await getTrendingSlugs();
+
   return (
     <div>
       <header className="flex flex-col items-center px-5 pt-6 pb-5 text-center">
@@ -75,7 +81,7 @@ export default function MenuPage() {
               <TagLegend tagIds={categoryTags} />
               <div className="flex flex-col gap-2.5">
                 {items.map((item) => (
-                  <DrinkCard key={item.slug} item={item} />
+                  <DrinkCard key={item.slug} item={item} trending={trending.has(item.slug)} />
                 ))}
               </div>
             </section>

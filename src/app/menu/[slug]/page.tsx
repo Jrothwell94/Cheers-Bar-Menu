@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getItemBySlug, getCategoryById, menuItems } from "@/data/menu";
 import { tags as tagInfo } from "@/data/tags";
 import TagIcon from "@/components/TagIcon";
+import TrackView from "@/components/TrackView";
 
 export function generateStaticParams() {
   return menuItems.map((item) => ({ slug: item.slug }));
@@ -29,6 +30,7 @@ export default async function DrinkDetailPage({
 
   return (
     <div className="pb-10">
+      <TrackView slug={item.slug} />
       <div className="px-5 pt-6">
         <Link
           href={backHref}
